@@ -3,82 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#1a0033">
+<meta name="theme-color" content="#0a0e17">
 <link rel="manifest" href="manifest.json">
-<title>WALOW CAD - نسخة العفاريت والجن 👻</title>
+<title>WALOW CAD - البستن أكل وشرب</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-*{box-sizing:border-box;font-family:system-ui}
-body{margin:0;background:#0d001a;color:#fff;background-image:radial-gradient(circle at 20% 20%,#2a0066 0%,transparent 40%),radial-gradient(circle at 80% 80%,#003300 0%,transparent 40%)}
-header{padding:14px;background:linear-gradient(90deg,#2a0066,#000);border-bottom:2px solid #a855f7;display:flex;justify-content:space-between;align-items:center}
-.card{background:#1a0033;border:1px solid #a855f7;border-radius:16px;padding:12px;margin:10px;box-shadow:0 0 20px #a855f733}
-button{background:#2a0066;color:#fff;border:1px solid #a855f7;padding:10px 12px;border-radius:10px;font-weight:800;cursor:pointer}
-.btn-pro{background:linear-gradient(135deg,#7c3aed,#22c55e);border:none}
-.btn-ghost{background:#000;border:1px dashed #a855f7;color:#c084fc}
-.btn-fire{background:linear-gradient(135deg,#ef4444,#f59e0b);border:none}
-#view{width:100%;height:500px;border-radius:14px;overflow:hidden;background:radial-gradient(circle,#1a0033,#000);position:relative;border:2px solid #a855f7}
-#hud{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.85);padding:10px;border-radius:10px;font-size:12px;pointer-events:none;border:1px solid #a855f7}
+*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#0a0e17;color:#fff;padding-bottom:20px}
+header{padding:14px;background:#111827;border-bottom:1px solid #222;display:flex;justify-content:space-between}
+.card{background:#111827;border:1px solid #222;border-radius:14px;padding:12px;margin:10px}
+button{background:#1f2937;color:#fff;border:1px solid #374151;padding:10px 12px;border-radius:9px;font-weight:700;cursor:pointer}
+.btn-pro{background:#2563eb;border:none}.btn-ok{background:#059669;border:none}.btn-food{background:#f59e0b;border:none;color:#000}
+#view{width:100%;height:480px;border-radius:12px;overflow:hidden;background:#0f172a;position:relative;border:1px solid #334155}
+#hud{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.85);padding:10px;border-radius:10px;font-size:12px;pointer-events:none}
 .row{display:flex;gap:8px;flex-wrap:wrap}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid #333;text-align:right}th{color:#c084fc}
-input{flex:1;background:#000;border:1px solid #a855f7;color:#fff;padding:11px;border-radius:9px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid #222;text-align:right}th{color:#38bdf8}
+input{flex:1;background:#030712;border:1px solid #374151;color:#fff;padding:11px;border-radius:9px}
 </style>
 </head>
 <body>
-<header><div><b style="font-size:20px">WALOW 👻 <span style="color:#c084fc">DJINN EDITION</span></b><div style="font-size:11px;color:#a3e635">بنكهة العفاريت والجن • طلاسم بابلية • فرعونية • مجرة عندك شو</div></div><div style="text-align:left;font-size:22px">🧞‍♂️🔮👻</div></header>
+<header><div><b>WALOW <span style="color:#38bdf8">CAD V7 - البستن شبعان</span></b><div style="font-size:11px;color:#999">بدون جن • بدون عفاريت • بس هندسة صح</div></div><span>🍔💪</span></header>
 
 <div class="card">
-<b style="color:#c084fc">🔮 اطلب من الجن أي آلة:</b>
-<div class="row" style="margin-top:8px"><input id="prompt" placeholder="مثال: محرك 4 بستن مسحور ، سفينة الجن ، تعليق عفريت..."><button class="btn-pro" onclick="buildFromPrompt()">🧞 استدعاء</button></div>
-<div id="detected" style="font-size:12px;color:#fbbf24;margin-top:6px">الجن جاهز... اطلب وتمنى 🧞</div>
-<div id="spell" style="font-size:11px;color:#a3e635;margin-top:4px">𓂀 𓆣 𓋹 𓀀 - طلسم بابلي لتثبيت البستن - 𓂀 𓆣</div>
+<b>✨ اطلب أي آلة:</b>
+<div class="row" style="margin-top:8px"><input id="prompt" placeholder="محرك ، سفينة ، تعليق ، تروس..."><button class="btn-pro" onclick="buildFromPrompt()">⚡ بناء</button></div>
+<div id="detected" style="font-size:12px;color:#fbbf24;margin-top:6px">البستن أكل وشرب، جاهز يشتغل 💪</div>
 </div>
 
 <div class="card"><div class="row">
-<button class="btn-pro" onclick="loadEngine()">🔥 محرك الجن 4 بستن</button>
-<button onclick="loadShip()">🚢 سفينة العفاريت</button>
-<button onclick="loadSusp()">تعليق مسحور</button>
-<button onclick="loadGear()">⚙️ تروس الجن</button>
-<button onclick="loadDragon()">🐉 تنين الفضائيين</button>
+<button class="btn-pro" onclick="loadEngine()">🔥 محرك 4 بستن - شبعان</button>
+<button onclick="loadShip()">🚢 سفينة</button>
+<button onclick="loadSusp()">تعليق</button>
+<button onclick="loadGear()">⚙️ تروس</button>
 </div></div>
 
 <div class="card">
-<div id="view"><div id="hud"><b style="color:#c084fc">📐 الأبعاد - بالمليمتر المسحور</b><div id="dims">280 × 180 × 160</div><div id="sel">اضغط أي قطعة - الجن يقيسها لك</div><div id="cnt" style="color:#22c55e"></div><div id="jinMsg" style="color:#fbbf24">🧞 العفريت: البستن واقف، الكرنك نايم، كلشي تمام</div></div></div>
+<div id="view"><div id="hud"><b>📐 الأبعاد mm</b><div>280 × 180 × 160</div><div id="sel">اضغط أي قطعة</div><div id="cnt" style="color:#10b981"></div><div id="pistonHealth" style="color:#f59e0b">🍔 صحة البستن: 100% - شبعان</div></div></div>
 <div class="row" style="margin-top:10px">
-<button class="btn-pro" onclick="playing=!playing">⏯ تشغيل / إيقاف السحر</button>
-<button class="btn-fire" onclick="explode()">💥 تفكيك بالعفاريت</button>
-<button class="btn-ghost" onclick="ghostMode()">👻 وضع الشبح</button>
-<button onclick="fireBoost()">🔥 نار الجن +1000</button>
-<button onclick="resetCam()">🎯 توسط</button>
+<button class="btn-pro" onclick="playing=!playing">⏯ تشغيل / إيقاف</button>
+<button class="btn-ok" onclick="explode()">💥 تفكيك / تجميع</button>
+<button class="btn-food" onclick="feedPiston()">🍔 أكّل البستن</button>
+<button onclick="resetCam()">🎯 توسط - رجّع المحرك عدل</button>
 </div>
-<div style="margin-top:10px">زاوية الكرنك: <b id="ang">0°</b> | ضغط الجن: <b id="prs">1.0 bar</b> | قوة العفريت: <b id="jinPower">666 HP 👻</b></div>
-<canvas id="graph" width="340" height="70" style="width:100%;background:#000;border-radius:8px;margin-top:8px;border:1px solid #a855f7"></canvas>
-</div>
-
-<div class="card">
-<b style="color:#c084fc">🧞 قائمة أرواح القطع (BOM) - اضغط أي روح</b>
-<table><thead><tr><th>#</th><th>اسم الروح</th><th>الأبعاد</th><th>الخامة المسحورة</th></tr></thead><tbody id="bom"></tbody></table>
+<div style="margin-top:8px">زاوية الكرنك: <b id="ang">0°</b> | ضغط: <b id="prs">1.0 bar</b> | سرعة: <b id="rpmTxt">90 RPM</b></div>
+<div><label>سرعة المحرك</label><input type="range" id="rpm" min="0" max="300" value="90" oninput="document.getElementById('rpmTxt').textContent=this.value+' RPM'" style="width:100%"></div>
+<canvas id="graph" width="340" height="70" style="width:100%;background:#020617;border-radius:8px;margin-top:8px"></canvas>
 </div>
 
-<div class="card" style="text-align:center;font-size:12px;color:#a3e635">
-🧞‍♂️ تمت كتابة هذا الكود بعد الاستعانة بـ 1000 عفريت، و 500 جن، و 3 فضائيين من مجرة "عندك شو" ومجرة "انتظر لحظة" ومجرة "أنا آسف" وسحابة أوريون وسحابة "اعتذر" 👽<br>
-إذا طلع بعدها صحن طائر، العفاريت هم السبب، مو أنا 😂
-</div>
+<div class="card"><b>🔩 BOM</b><table><thead><tr><th>#</th><th>القطعة</th><th>الأبعاد</th><th>الخامة</th></tr></thead><tbody id="bom"></tbody></table></div>
 
 <script>
-let scene,camera,renderer,group,parts=[],selected=null,playing=true,angle=0,assembled=true,autoRot=true,ghost=false,fireLevel=1,magicParticles=[];
+let scene,camera,renderer,group,parts=[],selected=null,playing=true,angle=0,assembled=true,health=100;
 let raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
 let gctx=document.getElementById('graph').getContext('2d'),hist=[];
 
-// === طلاسم العفاريت - دالة الخلق الصحيحة ===
+// دالة الخلق - الصحيحة 100%
 function mk(w,h,d,color,x,y,z,shape='box',op=1){
   let geo;
-  if(shape=='cylY') geo=new THREE.CylinderGeometry(w/2,w/2,h,28);
-  else if(shape=='cylX') geo=new THREE.CylinderGeometry(w/2,w/2,h,28);
-  else if(shape=='cylZ') geo=new THREE.CylinderGeometry(w/2,w/2,h,28);
+  if(shape=='cylY') geo=new THREE.CylinderGeometry(w/2,w/2,h,24);
+  else if(shape=='cylX') geo=new THREE.CylinderGeometry(w/2,w/2,h,24);
+  else if(shape=='cylZ') geo=new THREE.CylinderGeometry(w/2,w/2,h,24);
   else if(shape=='sphere') geo=new THREE.SphereGeometry(w/2,20,20);
   else if(shape=='cone') geo=new THREE.ConeGeometry(w/2,h,24);
   else geo=new THREE.BoxGeometry(w,h,d);
-  let mat=new THREE.MeshStandardMaterial({color:color,roughness:.25,metalness:.7,transparent:op<1,opacity:op,emissive:color,emissiveIntensity:0.08});
+  let mat=new THREE.MeshStandardMaterial({color:color,roughness:.3,metalness:.6,transparent:op<1,opacity:op});
   let m=new THREE.Mesh(geo,mat); m.position.set(x,y,z);
   if(shape=='cylX') m.rotation.z=Math.PI/2;
   if(shape=='cylZ') m.rotation.x=Math.PI/2;
@@ -90,136 +77,111 @@ function add(name,w,h,d,color,x,y,z,mat,shape='box',op=1){let mesh=mk(w,h,d,colo
 function render(){
   let bom=document.getElementById('bom');bom.innerHTML='';
   parts.forEach((p,i)=>{let tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+p.name+'</td><td>'+p.w+'×'+p.h+'×'+p.d+'</td><td>'+p.mat+'</td>';tr.onclick=()=>select(p);bom.appendChild(tr);});
-  document.getElementById('cnt').textContent='🧞 التركيب مكتمل ببركة الجن • '+parts.length+' روح';
+  document.getElementById('cnt').textContent='التركيب مكتمل • '+parts.length+' قطعة';
 }
-function select(p){if(selected)selected.mesh.material.emissiveIntensity=0.08;selected=p;p.mesh.material.emissiveIntensity=0.5;document.getElementById('sel').textContent='المحدد: '+p.name+' | '+p.w+'×'+p.h+'×'+p.d+' mm | '+p.mat;document.getElementById('jinMsg').textContent='🧞 العفريت يقول: هاي '+p.name+'، خامة '+p.mat+', وزنها مسحور';}
+function select(p){if(selected)selected.mesh.material.emissive.setHex(0);selected=p;p.mesh.material.emissive.setHex(0x333300);document.getElementById('sel').textContent='المحدد: '+p.name+' | '+p.w+'×'+p.h+'×'+p.d+' mm | '+p.mat;}
+function feedPiston(){
+  health=100;
+  document.getElementById('pistonHealth').textContent='🍔 صحة البستن: 100% - شبعان ومبسوط';
+  document.getElementById('detected').textContent='🍔🍔 البستن أكل برياني + شرب بيبسي، هسه عنده حيل يشتغل 1000 ساعة!';
+  document.getElementById('view').style.boxShadow='0 0 30px #f59e0b';
+  setTimeout(()=>document.getElementById('view').style.boxShadow='none',800);
+}
 
 function loadEngine(){
   clear();
-  add('قاعدة العفاريت',300,12,170,0x64748b,0,-95,0,'فولاذ مسحور');
-  // جدارين شفافين - حتى تشوف البستن من جوة مثل مال جيميني
-  add('جدار شبح أمامي',260,110,8,0xa855f7,0,0,65,'زجاج جن','box',0.15);
-  add('جدار شبح خلفي',260,110,8,0xa855f7,0,0,-65,'زجاج جن','box',0.15);
-  add('غطاء الرأس المسحور',260,10,140,0x1a0033,0,60,0,'بلاستيك جن');
-  // كرنك نايم على X - هذا كان البق القديم!
-  for(let i=0;i<5;i++){let x=-120+i*60; add('محمل كرنك '+(i+1)+' 👻',20,40,40,0xe2e8f0,x,-45,0,'فولاذ الجن','cylX');}
-  for(let i=0;i<4;i++){let x=-90+i*60; add('ثقل موازنة '+(i+1),14,60,50,0x94a3b8,x,-45,0,'فولاذ'); add('مرفق '+(i+1)+' 🔥',16,22,22,0xf59e0b,x,-20,0,'فولاذ النار','cylX');}
-  add('حذاف العفريت',85,85,16,0x334155,-172,-45,0,'فولاذ','cylX');
-  add('بكرة الجن',40,40,16,0x111827,172,-45,0,'مطاط مسحور','cylX');
-  // بستنات واقفة عمودي cylY - البستن واقف مثل الجندي، مو نايم!
-  let cols=[0xfacc15,0x38bdf8,0xd6a35c,0xa855f7];
+  // قاعدة رفيعة - ما تغطي شي
+  add('قاعدة',280,10,150,0x64748b,0,-90,0,'فولاذ');
+  // كتلة - جدارين شفافين فقط، حتى تشوف البستن من جوة
+  add('جدار أمامي شفاف',250,100,6,0x38bdf8,0,0,60,'زجاج','box',0.12);
+  add('جدار خلفي شفاف',250,100,6,0x38bdf8,0,0,-60,'زجاج','box',0.12);
+  // سقف
+  add('غطاء علوي',250,8,130,0x334155,0,55,0,'ألمنيوم');
+  // كرنك - نايم على X، تحت البستنات
+  for(let i=0;i<5;i++){let x=-110+i*55; add('محمل كرنك '+(i+1),18,36,36,0xe2e8f0,x,-40,0,'فولاذ','cylX');}
+  for(let i=0;i<4;i++){let x=-82+i*55; add('ثقل موازنة '+(i+1),12,55,45,0x94a3b8,x,-40,0,'فولاذ'); add('مرفق '+(i+1),14,20,20,0xf59e0b,x,-18,0,'فولاذ','cylX');}
+  add('حذاف',80,80,14,0x334155,-155,-40,0,'فولاذ','cylX');
+  add('بكرة',38,38,14,0x111827,155,-40,0,'مطاط','cylX');
+  // 4 بستنات - واقفة عمودي، فوق الكرنك، ألوان مختلفة مثل مال جيميني
+  let cols=[0xfacc15,0x38bdf8,0xd6a35c,0x94a3b8];
   for(let i=0;i<4;i++){
-    let x=-90+i*60;
-    add('ذراع '+(i+1)+' 🧞',12,45,12,0xe2e8f0,x,5,0,'فولاذ');
-    add('بستن '+(i+1)+' 🔥',42,50,42,cols[i],x,45,0,'ألمنيوم الجن','cylY');
-    add('حلقة نار '+(i+1),44,4,44,0xef4444,x,30,0,'نار','cylY');
-    add('حلقة جن '+(i+1),44,4,44,0x22c55e,x,38,0,'جن','cylY');
-    add('دبوس '+(i+1),10,10,44,0xf59e0b,x,40,0,'فولاذ','cylZ');
-    add('صمام سحب '+(i+1)+' 💨',8,30,8,0x10b981,x-12,72,0,'فولاذ','cylY');
-    add('صمام عادم '+(i+1)+' 🔥',8,30,8,0xef4444,x+12,72,0,'فولاذ','cylY');
+    let x=-82+i*55;
+    add('ذراع '+(i+1),10,38,10,0xe2e8f0,x,2,0,'فولاذ');
+    add('بستن '+(i+1),40,45,40,cols[i],x,38,0,'ألمنيوم','cylY');
+    add('حلقة '+(i+1),42,3,42,0x1e293b,x,24,0,'فولاذ','cylY');
+    add('حلقة 2 '+(i+1),42,3,42,0x1e293b,x,30,0,'فولاذ','cylY');
+    add('دبوس '+(i+1),8,8,42,0xf59e0b,x,32,0,'فولاذ','cylZ');
+    add('صمام سحب '+(i+1),7,28,7,0x10b981,x-11,68,0,'فولاذ','cylY');
+    add('صمام عادم '+(i+1),7,28,7,0xef4444,x+11,68,0,'فولاذ','cylY');
   }
-  add('رأس المحرك المسحور',260,14,140,0x1e293b,0,92,0,'ألمنيوم');
-  add('عمود كامات الجن',235,14,14,0xe2e8f0,0,108,0,'فولاذ','cylX');
-  for(let i=0;i<8;i++){let x=-100+i*28; add('كامة '+(i+1)+' 👻',16,24,10,0xf59e0b,x,108,0,'فولاذ');}
-  for(let i=0;i<4;i++){add('بخاخ نار '+(i+1)+' 🔥',10,20,10,0xef4444,-90+i*60,125,0,'بلاستيك النار');}
-  add('مجمع سحب الجن',240,12,12,0x94a3b8,0,115,45,'ألمنيوم','cylX');
-  add('مجمع عادم النار',240,12,12,0x78716c,0,115,-45,'فولاذ','cylX');
-  add('توربين العفريت',44,30,44,0xa855f7,140,0,0,'تيتانيوم مسحور','cylY');
-  add('كرة سحرية',28,28,28,0x22c55e,140,60,0,'بلورة الجن','sphere');
+  // رأس + كامات
+  add('رأس المحرك',250,12,130,0x1e293b,0,86,0,'ألمنيوم');
+  add('عمود كامات',230,12,12,0xe2e8f0,0,98,0,'فولاذ','cylX');
+  for(let i=0;i<8;i++){let x=-95+i*27; add('كامة '+(i+1),14,22,9,0xf59e0b,x,98,0,'فولاذ');}
+  for(let i=0;i<4;i++){add('بخاخ '+(i+1),9,18,9,0xef4444,-82+i*55,112,0,'بلاستيك');}
+  add('مجمع سحب',235,11,11,0x94a3b8,0,108,40,'ألمنيوم','cylX');
+  add('مجمع عادم',235,11,11,0x78716c,0,108,-40,'فولاذ','cylX');
+  add('توربين',42,28,42,0xa78bfa,125,0,0,'تيتانيوم','cylY');
   render();
-  document.getElementById('detected').textContent='🧞 تم استدعاء محرك الجن - '+parts.length+' روح - البستن واقف، الكرنك نايم';
+  document.getElementById('detected').textContent='✅ محرك شبعان - '+parts.length+' قطعة - البستن واقف، الكرنك نايم';
 }
 function loadShip(){
   clear();
-  add('بدن سفينة الجن',280,45,75,0x1e3a8a,0,0,0,'فولاذ بحري مسحور');
-  add('مقدمة مسحورة',60,38,50,0x1e3a8a,165,2,0,'فولاذ','cone');
-  add('جسر القيادة 👻',60,48,48,0xf8fafc,-82,-42,0,'ألمنيوم');
-  add('مدخنة نار',28,58,28,0xef4444,-20,-52,0,'فولاذ','cylY');
-  add('صاري الجن',10,120,10,0x8b5a2b,40,-62,0,'خشب مسحور','cylY');
-  add('حاوية جن 1',48,28,28,0xef4444,20,36,0,'فولاذ');
-  add('حاوية جن 2',48,28,28,0x10b981,82,36,0,'فولاذ');
-  add('مروحة العفريت',40,10,40,0xe2e8f0,-158,0,0,'برونز','cylX');
-  add('شبح القبطان',30,30,30,0xffffff,-82,-85,0,'شبح','sphere',0.4);
+  add('بدن',260,42,70,0x1e3a8a,0,0,0,'فولاذ بحري');
+  add('مقدمة',55,35,45,0x1e3a8a,150,2,0,'فولاذ','cone');
+  add('جسر',55,45,45,0xf8fafc,-75,-38,0,'ألمنيوم');
+  add('مدخنة',26,55,26,0xef4444,-18,-48,0,'فولاذ','cylY');
+  add('صاري',9,110,9,0x8b5a2b,35,-55,0,'خشب','cylY');
+  add('حاوية',45,26,26,0xef4444,18,32,0,'فولاذ');
+  add('حاوية 2',45,26,26,0x10b981,75,32,0,'فولاذ');
+  add('مروحة',38,9,38,0xe2e8f0,-145,0,0,'برونز','cylX');
   render();
 }
 function loadSusp(){
   clear();
-  add('ذراع عفريت',170,16,26,0xef4444,0,0,0,'فولاذ');
-  add('نابض الجن',24,70,24,0xe2e8f0,-50,-45,0,'زنبركي','cylY');
-  add('بوش مسحور',26,26,26,0x0284c7,-82,0,0,'مطاط','cylZ');
-  add('بوش 2',26,26,26,0x0284c7,82,0,0,'مطاط','cylZ');
-  add('مفصل 👻',30,30,30,0xf59e0b,0,35,0,'فولاذ','sphere');
-  add('مساعد',18,90,18,0x94a3b8,50,-20,0,'ألمنيوم','cylY');
+  add('ذراع',160,15,25,0xef4444,0,0,0,'فولاذ');
+  add('نابض',22,65,22,0xe2e8f0,-45,-40,0,'زنبركي','cylY');
+  add('بوش',24,24,24,0x0284c7,-75,0,0,'مطاط','cylZ');
+  add('بوش 2',24,24,24,0x0284c7,75,0,0,'مطاط','cylZ');
+  add('مفصل',28,28,28,0xf59e0b,0,32,0,'فولاذ','sphere');
+  add('مساعد',16,85,16,0x94a3b8,45,-18,0,'ألمنيوم','cylY');
   render();
 }
 function loadGear(){
   clear();
-  add('علبة تروس الجن',200,110,90,0x1a0033,0,0,0,'ألمنيوم مسحور');
-  add('ترس كبير 👻',92,92,22,0xe2e8f0,-35,0,0,'فولاذ','cylZ');
-  add('ترس صغير',52,52,22,0xf59e0b,48,0,0,'فولاذ','cylZ');
-  add('ترس وسط',62,62,22,0x38bdf8,0,-58,0,'فولاذ','cylZ');
-  add('عمود الجن',175,16,16,0x94a3b8,0,0,0,'فولاذ','cylX');
+  add('علبة',190,100,85,0x1f2937,0,0,0,'ألمنيوم');
+  add('ترس كبير',88,88,20,0xe2e8f0,-32,0,0,'فولاذ','cylZ');
+  add('ترس صغير',48,48,20,0xf59e0b,45,0,0,'فولاذ','cylZ');
+  add('ترس وسط',58,58,20,0x38bdf8,0,-55,0,'فولاذ','cylZ');
+  add('عمود',165,14,14,0x94a3b8,0,0,0,'فولاذ','cylX');
   render();
-}
-function loadDragon(){
-  clear();
-  add('جسم التنين 🐉',140,40,40,0x22c55e,0,0,0,'حراشف تنين');
-  add('رأس التنين',50,50,50,0xef4444,90,20,0,'نار','sphere');
-  add('جناح 1',80,6,50,0xa855f7,-20,30,40,'جناح خفاش');
-  add('جناح 2',80,6,50,0xa855f7,-20,30,-40,'جناح خفاش');
-  add('ذيل التنين',90,12,12,0x22c55e,-110,0,0,'حراشف');
-  add('نار التنين 🔥',30,30,30,0xf59e0b,130,20,0,'نار','sphere');
-  add('عين التنين 👁️',12,12,12,0xfacc15,110,35,15,'بلورة','sphere');
-  add('عين 2',12,12,12,0xfacc15,110,35,-15,'بلورة','sphere');
-  render();
-  document.getElementById('detected').textContent='🐉 تم استدعاء تنين الفضائيين من مجرة عندك شو!';
 }
 function buildFromPrompt(){
   let t=document.getElementById('prompt').value||'';
   if(t.includes('سفينة')) loadShip();
   else if(t.includes('تعليق')) loadSusp();
   else if(t.includes('تروس')) loadGear();
-  else if(t.includes('تنين')||t.includes('فضائي')) loadDragon();
   else loadEngine();
-  document.getElementById('detected').textContent='🧞 الجن سمع كلامك: '+t;
+  document.getElementById('detected').textContent='تم بناء: '+t;
 }
 function explode(){
   assembled=!assembled;
-  document.getElementById('jinMsg').textContent=assembled?'🧞 العفريت ركّب المحرك':'💥 العفريت فكك المحرك! القطع طايرة!';
-  parts.forEach((p,i)=>{let t=assembled?p.orig:p.orig.clone().multiplyScalar(1.8).add(new THREE.Vector3(0,i%2?70:-45,0));let s=p.mesh.position.clone(),c=0;let iv=setInterval(()=>{c++;p.mesh.position.lerpVectors(s,t,c/30);if(c>=30)clearInterval(iv)},18);});
+  parts.forEach((p,i)=>{let t=assembled?p.orig:p.orig.clone().multiplyScalar(1.7).add(new THREE.Vector3(0,i%2?55:-35,0));let s=p.mesh.position.clone(),c=0;let iv=setInterval(()=>{c++;p.mesh.position.lerpVectors(s,t,c/30);if(c>=30)clearInterval(iv)},18);});
 }
-function ghostMode(){
-  ghost=!ghost;
-  parts.forEach(p=>{p.mesh.material.transparent=true;p.mesh.material.opacity=ghost?0.35:1;});
-  document.getElementById('jinMsg').textContent=ghost?'👻 وضع الشبح: كلشي شفاف، تشوف الأرواح من جوة':'🧞 رجعنا للوضع العادي';
-}
-function fireBoost(){
-  fireLevel=fireLevel>=3?1:fireLevel+1;
-  document.getElementById('jinPower').textContent=(666*fireLevel)+' HP 👻🔥';
-  document.getElementById('jinMsg').textContent='🔥🔥 نار الجن صارت ×'+fireLevel+' ! البستن راح يطير!';
-  // وميض ناري
-  document.getElementById('view').style.boxShadow='0 0 40px #ef4444';
-  setTimeout(()=>document.getElementById('view').style.boxShadow='none',500);
-}
-function resetCam(){camera.position.set(240,180,340);camera.lookAt(0,0,0);}
-function createMagic(){
-  for(let i=0;i<40;i++){
-    let g=new THREE.SphereGeometry(2,8,8);
-    let m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:i%2?0xa855f7:0x22c55e}));
-    m.position.set((Math.random()-0.5)*400,(Math.random()-0.5)*300,(Math.random()-0.5)*400);
-    m.userData={vy:Math.random()*0.8+0.3};
-    scene.add(m); magicParticles.push(m);
-  }
+function resetCam(){
+  camera.position.set(320,260,520);
+  camera.lookAt(0,0,0);
+  group.rotation.set(0,0.6,0);
 }
 function init(){
-  scene=new THREE.Scene();scene.background=new THREE.Color(0x0d001a);
-  camera=new THREE.PerspectiveCamera(50,document.getElementById('view').clientWidth/500,1,3000);camera.position.set(240,180,340);
-  renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(document.getElementById('view').clientWidth,500);document.getElementById('view').appendChild(renderer.domElement);
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x0f172a);
+  camera=new THREE.PerspectiveCamera(50,document.getElementById('view').clientWidth/480,1,3000);
+  camera.position.set(320,260,520);
+  renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(document.getElementById('view').clientWidth,480);document.getElementById('view').appendChild(renderer.domElement);
   scene.add(new THREE.AmbientLight(0xffffff,.9));
-  let l=new THREE.DirectionalLight(0xa855f7,1);l.position.set(120,220,120);scene.add(l);
-  let l2=new THREE.DirectionalLight(0x22c55e,.6);l2.position.set(-120,80,-120);scene.add(l2);
-  scene.add(new THREE.GridHelper(600,24,0xa855f7,0x1e293b));group=new THREE.Group();scene.add(group);
-  createMagic();
+  let l=new THREE.DirectionalLight(0xffffff,1);l.position.set(120,220,120);scene.add(l);
+  scene.add(new THREE.GridHelper(600,24,0x334155,0x1e293b));
+  group=new THREE.Group();group.rotation.set(0,0.6,0);scene.add(group);
   let drag=false,lx=0,ly=0;
   renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY});
   window.addEventListener('pointermove',e=>{if(!drag)return;group.rotation.y+=(e.clientX-lx)*0.01;group.rotation.x+=(e.clientY-ly)*0.01;lx=e.clientX;ly=e.clientY;});
@@ -227,18 +189,23 @@ function init(){
   renderer.domElement.addEventListener('click',e=>{let r=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(mouse,camera);let h=raycaster.intersectObjects(parts.map(p=>p.mesh));if(h.length){let p=parts.find(x=>x.mesh===h[0].object);if(p)select(p);}});
   renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();camera.position.multiplyScalar(1+e.deltaY*0.001)},{passive:false});
   loadEngine();
-  (function anim(){requestAnimationFrame(anim);if(autoRot)group.rotation.y+=0.004;
-    magicParticles.forEach(m=>{m.position.y+=m.userData.vy; if(m.position.y>180)m.position.y=-180; m.rotation.x+=0.02;});
-    if(playing){angle=(angle+1.5*fireLevel)%720;
+  (function anim(){requestAnimationFrame(anim);
+    if(playing){
+      let rpm=+document.getElementById('rpm').value;
+      angle=(angle+rpm/60)%720;
+      // البستن يتحرك - إذا جوعان يتحرك شوية شوية، إذا شبعان يتحرك بقوة
+      let power=health/100;
       parts.forEach(p=>{
-        if(p.name.includes('بستن')){let n=parseInt(p.name.match(/\d+/)[0]);p.mesh.position.y=p.orig.y+Math.sin((angle+(n-1)*180)*Math.PI/180)*16;}
-        if(p.name.includes('ذراع')){let n=parseInt(p.name.match(/\d+/)[0]);p.mesh.position.y=p.orig.y+Math.sin((angle+(n-1)*180)*Math.PI/180)*10;}
-        if(p.name.includes('مرفق')||p.name.includes('محمل كرنك')){p.mesh.rotation.z=angle*Math.PI/180+Math.PI/2;}
+        if(p.name.includes('بستن')){let n=parseInt(p.name.match(/\d+/)[0]);p.mesh.position.y=p.orig.y+Math.sin((angle+(n-1)*180)*Math.PI/180)*15*power;}
+        if(p.name.includes('ذراع')){let n=parseInt(p.name.match(/\d+/)[0]);p.mesh.position.y=p.orig.y+Math.sin((angle+(n-1)*180)*Math.PI/180)*9*power;}
+        if(p.name.includes('مرفق')){p.mesh.rotation.z=angle*Math.PI/180+Math.PI/2;}
       });
-      let pr=1+Math.max(0,Math.sin(angle*Math.PI/180))*2.6*fireLevel;
-      document.getElementById('ang').textContent=Math.round(angle)+'° من 720°';document.getElementById('prs').textContent=pr.toFixed(1)+' bar 👻';
-      hist.push(pr);if(hist.length>60)hist.shift();gctx.clearRect(0,0,340,70);gctx.strokeStyle='#a855f7';gctx.lineWidth=2;gctx.beginPath();hist.forEach((v,i)=>{let x=i*5.6,y=62-v*12;i?gctx.lineTo(x,y):gctx.moveTo(x,y)});gctx.stroke();
-      gctx.strokeStyle='#22c55e';gctx.beginPath();hist.forEach((v,i)=>{let x=i*5.6,y=62-Math.sin((angle+i*12)*Math.PI/180)*20-28;i?gctx.lineTo(x,y):gctx.moveTo(x,y)});gctx.stroke();
+      // البستن يجوع مع الوقت - مثل ما قلت صار يومين ما أكل
+      health=Math.max(20,health-0.02);
+      document.getElementById('pistonHealth').textContent='🍔 صحة البستن: '+Math.round(health)+'% '+(health<50?' - جوعان! دوس أكّل البستن':' - شبعان');
+      let pr=1+Math.max(0,Math.sin(angle*Math.PI/180))*2.5*power;
+      document.getElementById('ang').textContent=Math.round(angle)+'° من 720°';document.getElementById('prs').textContent=pr.toFixed(1)+' bar';
+      hist.push(pr);if(hist.length>60)hist.shift();gctx.clearRect(0,0,340,70);gctx.strokeStyle='#ef4444';gctx.lineWidth=2;gctx.beginPath();hist.forEach((v,i)=>{let x=i*5.6,y=62-v*16;i?gctx.lineTo(x,y):gctx.moveTo(x,y)});gctx.stroke();
     }
     renderer.render(scene,camera);})();
 }
