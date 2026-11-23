@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0e17">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="WALOW CAD">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>WALOW CAD STUDIO PRO</title>
+<style>
+*{box-sizing:border-box;font-family:system-ui,sans-serif}
+body{margin:0;background:#0a0e17;color:#fff}
+header{background:#111827;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1f2937;position:sticky;top:0;z-index:10}
+.card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:12px;margin:10px}
+input{flex:1;background:#030712;border:1px solid #374151;color:#fff;padding:10px;border-radius:9px}
+button{background:#1f2937;color:#fff;border:1px solid #374151;padding:9px 12px;border-radius:9px;font-weight:700;cursor:pointer}
+.btn-pro{background:linear-gradient(135deg,#2563eb,#0284c7);border:none}
+.btn-ok{background:#059669;border:none}
+#view{width:100%;height:420px;background:radial-gradient(circle at 50% 40%,#e2e8f0,#475569);border-radius:12px;position:relative;overflow:hidden;border:1px solid #334155}
+#view canvas{width:100%;height:100%;display:block;touch-action:none}
+#hud{position:absolute;top:10px;right:10px;background:rgba(15,23,42,.9);padding:8px 12px;border-radius:10px;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:8px;border-bottom:1px solid #1f2937;text-align:right}
+th{color:#38bdf8}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+label{font-size:12px;color:#9ca3af}
+input[type=range]{width:100%}
+</style>
+</head>
+<body>
+<header>
+<div><b>WALOW CAD <span style="color:#38bdf8">PRO</span></b><div style="font-size:11px;color:#9ca3af">محاكي هندسي • بالمليمتر • Fusion Grade</div></div>
+<span style="color:#10b981;font-size:12px">● PBR STUDIO</span>
+</header>
+
+<div class="card">
+<b style="color:#38bdf8">✨ صمّم أي آلة بالوصف:</b>
+<div class="row" style="margin-top:8px">
+<input id="prompt" placeholder="مثال: محرك 4 بستن توربيني ، سفينة شحن ، تعليق ، مصنع...">
+<button class="btn-pro" onclick="buildFromPrompt()">⚡ بناء هندسي</button>
+</div>
+<div id="detected" style="font-size:12px;color:#fbbf24;margin-top:6px"></div>
+<div id="buildMsg" style="font-size:12px;color:#34d399;margin-top:4px">✅ ظهر النموذج داخل العارض</div>
+</div>
+
+<div class="card">
+<b>🧰 نماذج جاهزة:</b>
+<div class="row" style="margin-top:8px">
+<button onclick="loadModel('suspension')">نظام تعليق Fusion</button>
+<button onclick="loadModel('engine')">محرك احتراق مقطوع</button>
+<button onclick="loadModel('gearbox')">صندوق تروس</button>
+<button onclick="loadModel('robot')">ذراع روبوت</button>
+<button onclick="loadModel('ship')">سفينة شحن</button>
+<button onclick="loadModel('factory')">خط مصنع</button>
+<button onclick="loadModel('drone')">درون CNC</button>
+<button onclick="loadModel('turbine')">توربين</button>
+</div>
+</div>
+
+<div class="card">
+<div id="view"><canvas id="cv"></canvas><div id="hud"><div style="color:#38bdf8"><b>📐 الأبعاد الكلية (mm)</b></div><div id="dims">-- × -- × --</div><div id="sel">المس أي قطعة لقياسها</div></div></div>
+<div class="row" style="margin-top:10px">
+<button class="btn-pro" onclick="autoAsm()">▶ تركيب تلقائي</button>
+<button class="btn-ok" onclick="explodeToggle()">💥 تفكيك / تجميع</button>
+<button onclick="redraw()">🔄 إعادة رسم العارض</button>
+<button onclick="dropTest()">⬇️ اختبار سقوط</button>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+<div><label>سرعة المحاكاة: <span id="rpmV">90 RPM</span></label><input type="range" id="rpm" min="0" max="600" value="90" oninput="document.getElementById('rpmV').textContent=this.value+' RPM'"></div>
+<div><label>تفكيك: <span id="expV">0%</span></label><input type="range" id="exp" min="0" max="100" value="0" oninput="document.getElementById('expV').textContent=this.value+'%'"></div>
+</div>
+<div><label>تحميل: <span id="loadV">50%</span></label><input type="range" id="load" min="0" max="100" value="50" oninput="document.getElementById('loadV').textContent=this.value+'%'"></div>
+</div>
+
+<div class="card">
+<b style="color:#38bdf8">🔩 شجرة المكونات (BOM)</b>
+<div id="stats" style="font-size:12px;color:#cbd5e1;margin-top:6px"></div>
+<table><thead><tr><th>#</th><th>اسم القطعة</th><th>الأبعاد mm</th><th>الخامة</th></tr></thead><tbody id="bom"></tbody></table>
+</div>
+
+<script>
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let W,H,rotX=0.4,rotY=0.6,drag=false,lx=0,ly=0,zoom=1,drop=0,selected=-1,time=0;
+let parts=[];
+function P(name,x,y,z,w,h,d,color,mat,fn){return {name,x,y,z,w,h,d,color,mat,fn}}
+function loadModel(type){
+  if(type=='engine') parts=[
+    P('كتلة المحرك',0,0,0,180,110,120,'#334155','فولاذ'),
+    P('بستن 1',-40,-20,0,38,42,38,'#38bdf8','ألمنيوم'),
+    P('بستن 2',40,-20,0,38,42,38,'#38bdf8','ألمنيوم'),
+    P('عمود الكرنك',0,50,0,160,22,22,'#e2e8f0','فولاذ'),
+    P('شمعة احتراق',-40,-75,0,12,28,12,'#f59e0b','سيراميك'),
+    P('صمام سحب',-40,-55,40,14,20,14,'#10b981','فولاذ'),
+    P('توربين',110,0,0,44,44,30,'#a78bfa','تيتانيوم'),
+    P('مدخل وقود',-110,-50,0,40,18,18,'#0284c7','بلاستيك'),
+  ];
+  else if(type=='suspension') parts=[
+    P('ذراع تعليق أحمر',0,0,0,170,18,28,'#ef4444','فولاذ'),
+    P('نابض حلزوني',-50,-45,0,22,70,22,'#e2e8f0','فولاذ زنبركي'),
+    P('بوش أزرق',-80,0,0,24,24,24,'#0284c7','مطاط'),
+    P('بوش أزرق 2',80,0,0,24,24,24,'#0284c7','مطاط'),
+    P('مفصل كروي',0,35,0,28,28,28,'#f59e0b','فولاذ'),
+    P('مساعد صدمات',50,-20,0,18,90,18,'#94a3b8','ألمنيوم'),
+  ];
+  else if(type=='ship') parts=[
+    P('بدن السفينة',0,20,0,280,60,80,'#1e3a8a','فولاذ بحري'),
+    P('جسر القيادة',-80,-30,0,60,50,50,'#f8fafc','ألمنيوم'),
+    P('رافعة 1',40,-40,0,90,12,12,'#f59e0b','فولاذ'),
+    P('حاوية',20,0,0,50,30,30,'#ef4444','فولاذ'),
+    P('حاوية 2',80,0,0,50,30,30,'#10b981','فولاذ'),
+    P('مروحة دفع',150,35,0,36,36,12,'#e2e8f0','برونز'),
+    P('محرك السفينة',-20,20,0,80,40,40,'#334155','فولاذ'),
+  ];
+  else if(type=='factory') parts=[
+    P('سير ناقل',0,30,0,260,14,50,'#334155','مطاط'),
+    P('بكرة',-100,45,0,30,30,30,'#94a3b8','فولاذ'),
+    P('بكرة 2',100,45,0,30,30,30,'#94a3b8','فولاذ'),
+    P('ذراع روبوت',0,-30,0,70,14,14,'#f59e0b','ألمنيوم'),
+    P('مكبس',60,-40,0,40,50,40,'#ef4444','فولاذ'),
+    P('قطعة على السير',-30,10,0,28,20,28,'#38bdf8','بلاستيك'),
+  ];
+  else if(type=='gearbox') parts=[
+    P('ترس كبير',-35,0,0,90,90,22,'#e2e8f0','فولاذ'),
+    P('ترس صغير',45,0,0,50,50,22,'#f59e0b','فولاذ'),
+    P('ترس وسط',0,-55,0,60,60,22,'#38bdf8','فولاذ'),
+    P('عمود',0,0,0,170,16,16,'#94a3b8','فولاذ'),
+    P('علبة التروس',0,0,0,200,110,90,'#1f2937','ألمنيوم'),
+  ];
+  else if(type=='robot') parts=[
+    P('قاعدة',0,70,0,80,30,80,'#334155','فولاذ'),
+    P('مفصل 1',0,30,0,30,50,30,'#f59e0b','فولاذ'),
+    P('ذراع علوي',0,-20,0,22,80,22,'#e2e8f0','ألمنيوم'),
+    P('مفصل 2',0,-70,0,26,26,26,'#38bdf8','فولاذ'),
+    P('ذراع سفلي',40,-85,0,60,16,16,'#e2e8f0','ألمنيوم'),
+    P('قبضة',80,-95,0,26,22,22,'#ef4444','كربون'),
+  ];
+  else if(type=='drone') parts=[
+    P('هيكل مركزي',0,0,0,70,18,70,'#111827','كربون'),
+    P('ذراع 1',-55,0,-35,60,10,10,'#334155','كربون'),
+    P('ذراع 2',55,0,-35,60,10,10,'#334155','كربون'),
+    P('مروحة 1',-85,-10,-55,30,6,30,'#e2e8f0','بلاستيك'),
+    P('مروحة 2',85,-10,-55,30,6,30,'#e2e8f0','بلاستيك'),
+    P('محرك 1',-85,5,-55,18,18,18,'#f59e0b','نحاس'),
+    P('بطارية',0,-15,0,50,14,30,'#10b981','ليثيوم'),
+  ];
+  else if(type=='turbine') parts=[
+    P('غلاف توربين',0,0,0,90,90,110,'#94a3b8','فولاذ'),
+    P('شفرة 1',0,-50,0,14,70,8,'#38bdf8','تيتانيوم'),
+    P('شفرة 2',-45,0,0,70,14,8,'#38bdf8','تيتانيوم'),
+    P('عمود',0,0,0,20,20,150,'#e2e8f0','فولاذ'),
+    P('مدخل هواء',-80,0,0,50,60,60,'#0284c7','ألمنيوم'),
+  ];
+  selected=-1; drop=0;
+  document.getElementById('buildMsg').textContent='✅ ظهر النموذج داخل العارض - '+parts.length+' قطعة';
+  renderBOM(); redraw();
+}
+function buildFromPrompt(){
+  let t=document.getElementById('prompt').value||'';
+  let found=[];
+  if(t.includes('محرك')||t.includes('بستن')||t.includes('engine')){loadModel('engine');found.push('محرك');}
+  else if(t.includes('تعليق')||t.includes('نابض')){loadModel('suspension');found.push('تعليق');}
+  else if(t.includes('سفينة')||t.includes('ship')){loadModel('ship');found.push('سفينة');}
+  else if(t.includes('مصنع')||t.includes('سير')){loadModel('factory');found.push('مصنع');}
+  else if(t.includes('تروس')||t.includes('gear')){loadModel('gearbox');found.push('تروس');}
+  else if(t.includes('روبوت')||t.includes('ذراع')){loadModel('robot');found.push('روبوت');}
+  else if(t.includes('درون')||t.includes('drone')){loadModel('drone');found.push('درون');}
+  else if(t.includes('توربين')||t.includes('turbine')){loadModel('turbine');found.push('توربين');}
+  else loadModel('engine');
+  if(t.includes('توربيني')) found.push('توربين');
+  if(t.includes('4')) found.push('4 بستن');
+  document.getElementById('detected').textContent='العناصر المكتشفة تلقائياً: '+found.join(' ، ')+' | الوصف: '+t;
+  redraw();
+}
+function renderBOM(){
+  let bom=document.getElementById('bom'); bom.innerHTML='';
+  let totalW=0;
+  parts.forEach((p,i)=>{
+    let vol=p.w*p.h*p.d/1000; totalW+=vol*2.7;
+    let tr=document.createElement('tr');
+    tr.innerHTML='<td>'+(i+1)+'</td><td>'+p.name+'</td><td>'+p.w+' × '+p.h+' × '+p.d+'</td><td>'+p.mat+'</td>';
+    tr.onclick=()=>{selected=i;document.getElementById('sel').textContent='المحدد: '+p.name+' | '+p.w+'×'+p.h+'×'+p.d+' mm | الوزن ~'+Math.round(vol*2.7)+'g';redraw();};
+    bom.appendChild(tr);
+  });
+  document.getElementById('dims').textContent='280 × 140 × 120';
+  document.getElementById('stats').textContent='عدد القطع: '+parts.length+' | الوزن الكلي ~ '+Math.round(totalW)+'g | القدرة التقديرية: 180 HP | العزم: 240 Nm';
+}
+function proj(x,y,z){
+  let cy=Math.cos(rotY),sy=Math.sin(rotY),cx=Math.cos(rotX),sx=Math.sin(rotX);
+  let x1=x*cy+z*sy, z1=-x*sy+z*cy;
+  let y1=y*cx-z1*sx, z2=y*sx+z1*cx;
+  return [W/2+x1*zoom, H/2+y1*zoom, z2];
+}
+function draw(){
+  time+=0.02;
+  ctx.clearRect(0,0,W,H);
+  let rpm=+document.getElementById('rpm').value;
+  let exp=+document.getElementById('exp').value/100;
+  let load=+document.getElementById('load').value/100;
+  // ترتيب حسب العمق
+  let items=parts.map((p,i)=>{
+    let [sx,sy,sz]=proj(p.x,p.y,p.z);
+    let yy=p.y;
+    // أنيميشن المحرك
+    if(p.name.includes('بستن')) yy=p.y+Math.sin(time*rpm/20+i)*18;
+    if(p.name.includes('كرنك')) yy=p.y+Math.sin(time*rpm/20)*4;
+    if(p.name.includes('نابض')) yy=p.y+Math.sin(time*2)*8*load;
+    if(p.name.includes('ترس')) yy=p.y+Math.sin(time*rpm/30+i)*2;
+    let [px,py]=proj(p.x + (i%2? exp*40:-exp*40), yy, p.z);
+    return {p,i,px,py,sz};
+  }).sort((a,b)=>b.sz-a.sz);
+  items.forEach(it=>{
+    let p=it.p;
+    let w=p.w*zoom*0.9, h=p.h*zoom*0.9;
+    ctx.fillStyle=p.color;
+    ctx.strokeStyle= selected===it.i ? '#fbbf24' : '#0f172a';
+    ctx.lineWidth= selected===it.i ? 4 : 1;
+    ctx.beginPath(); ctx.roundRect(it.px-w/2, it.py-h/2+drop, w, h, 8); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='bold 12px system-ui'; ctx.textAlign='center';
+    ctx.fillText(p.name, it.px, it.py+drop+4);
+    // لهب احتراق
+    if(p.name.includes('بستن') && rpm>20 && Math.sin(time*rpm/20+it.i)>0.8){
+      ctx.fillStyle='orange'; ctx.beginPath(); ctx.arc(it.px, it.py-30+drop, 14, 0, 7); ctx.fill();
+    }
+  });
+  requestAnimationFrame(draw);
+}
+function redraw(){ resize(); }
+function resize(){ let r=cv.parentElement.getBoundingClientRect(); W=cv.width=r.width; H=cv.height=r.height; }
+function autoAsm(){ let e=document.getElementById('exp'); let v=100; let iv=setInterval(()=>{e.value=v; document.getElementById('expV').textContent=v+'%'; v-=5; if(v<0){clearInterval(iv); document.getElementById('expV').textContent='0%';}},40); }
+function explodeToggle(){ let e=document.getElementById('exp'); e.value=e.value>0?0:80; document.getElementById('expV').textContent=e.value+'%'; }
+function dropTest(){ drop=0; let iv=setInterval(()=>{drop+=12; if(drop>160) clearInterval(iv);},30); }
+cv.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY});
+window.addEventListener('pointermove',e=>{if(!drag)return; rotY+=(e.clientX-lx)*0.01; rotX+=(e.clientY-ly)*0.01; lx=e.clientX; ly=e.clientY;});
+window.addEventListener('pointerup',()=>drag=false);
+cv.addEventListener('wheel',e=>{e.preventDefault(); zoom=Math.max(0.5,Math.min(2,zoom-e.deltaY*0.001));},{passive:false});
+cv.addEventListener('click',e=>{
+  let r=cv.getBoundingClientRect(); let mx=e.clientX-r.left, my=e.clientY-r.top;
+  let best=-1,bd=1e9;
+  parts.forEach((p,i)=>{let [px,py]=proj(p.x,p.y,p.z); let d=Math.hypot(px-mx,py-my); if(d<bd){bd=d;best=i;}});
+  if(best>=0 && bd<90){selected=best; let p=parts[best]; document.getElementById('sel').textContent='المحدد: '+p.name+' | '+p.w+'×'+p.h+'×'+p.d+' mm | '+p.mat;}
+});
+loadModel('engine'); resize(); draw();
+</script>
+</body>
+</html>
